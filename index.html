@@ -1,0 +1,168 @@
+<html>
+  <head>
+    <script
+      src="https://unpkg.com/react@18/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>Captcha</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: black;
+      }
+      h1 {
+        color: white;
+      }
+      .login {
+        background-image: linear-gradient(
+          to bottom,
+          white,
+          lightblue,
+          turquoise,
+          aqua
+        );
+        border: 5px solid red;
+        padding: 25px;
+        width: 180px;
+        height: 350px;
+      }
+      .captcha {
+        background-color: yellow;
+        border: 1px solid black;
+        padding: 5px;
+        color: red;
+        width: 160px;
+        text-align: center;
+        font-family: "Times New Roman", Times, serif;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+      }
+      .pass-tog {
+        width: 13px;
+        height: 15px;
+      }
+      #toggle-pass {
+        margin-left: 5px;
+      }
+      #password {
+        width: 140px;
+      }
+      .password-container {
+        display: flex;
+        align-items: center;
+      }
+      .recap{
+        height: 20px;
+        width: 20px;
+      }
+      .rebutton{
+        margin-left:60px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mydiv"></div>
+    <script type="text/babel">
+      const { useState } = React;
+      function Login() {
+        const account = [["tanishq9386", "Tanishq@2004"]];
+        const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const [showPassword, setShowPassword] = useState(false);
+        const [captcha, setCaptcha] = useState(generateCaptcha());
+        function generateCaptcha() {
+          let captcha = "";
+          for (let i = 0; i < 6; i++) {
+            captcha += characters.charAt(
+              Math.floor(Math.random() * characters.length)
+            );
+          }
+          return captcha;
+        }
+        function validLogin() {
+          const id = document.getElementById("username").value;
+          const pass = document.getElementById("password").value;
+          const cap = document.getElementById("captcha").value;
+          if (cap === captcha) {
+            for (let i = 0; i < account.length; i++) {
+              if (id === account[i][0] && pass === account[i][1]) {
+                window.alert(
+                  "You have entered all the details correctly and you shall be redirected now."
+                );
+                return;
+              } else {
+                window.alert(
+                  "You have entered wrong username/password. Please try again."
+                );
+              }
+            }
+          } else {
+            window.alert("Wrong captcha. Please try again.");
+          }
+          window.location.reload();
+        }
+        function icon(event) {
+          event.preventDefault();
+          setShowPassword(!showPassword);
+          if (showPassword) {
+            console.log("now shown");
+          } else {
+            console.log("now hidden");
+          }
+        }
+        const reloadCaptcha=()=>{
+          setCaptcha(generateCaptcha());
+        }
+        return (
+          <>
+            <h1>Login!!</h1>
+            <div className="login">
+              <input type="text" placeholder="Username" id="username" />
+              <br />
+              <br />
+              <div className="password-container">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  id="password"
+                />
+                <button
+                  type="button"
+                  id="toggle-pass"
+                  className="toggle-pass"
+                  onClick={icon}
+                >
+                  <img className="pass-tog" src={showPassword ? "./show.png" : "./hide.png"} />
+                </button>
+              </div>
+              <br />
+              <div className="captcha">
+                {captcha} 
+                <button className="rebutton" type="button" onClick={reloadCaptcha}><img className="recap" src="./reload.png"/></button>
+                </div>
+              <br />
+              <input type="text" placeholder="Captcha" id="captcha" />
+              <br />
+              <br />
+              <button type="submit" onClick={validLogin}>
+                Submit
+              </button>
+            </div>
+          </>
+        );
+      }
+      const root = ReactDOM.createRoot(document.getElementById("mydiv"));
+      root.render(<Login />);
+    </script>
+  </body>
+</html>
