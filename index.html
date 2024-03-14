@@ -52,22 +52,57 @@
         width: 13px;
         height: 15px;
       }
-      #toggle-pass {
+      .toggle-pass {
         margin-left: 5px;
       }
-      #password {
+      .password {
         width: 140px;
       }
       .password-container {
         display: flex;
         align-items: center;
+        width: 200px;
+        flex-wrap: wrap;
       }
-      .recap{
+      .recap {
         height: 20px;
         width: 20px;
       }
-      .rebutton{
-        margin-left:60px;
+      .rebutton {
+        margin-left: 60px;
+      }
+      #submitb {
+        background-image: radial-gradient(white, lightgreen);
+        border: 1.5px solid green;
+        color: brown;
+      }
+      #button-mar {
+        margin-top: -10px;
+      }
+      #hidden {
+        display: none;
+      }
+      .repass {
+        margin-top: 15px;
+        width: 140px;
+      }
+      .repassb {
+        margin-left: 5px;
+        margin-top: 15px;
+      }
+      #passwidth {
+        width: 170px;
+      }
+      .inactive {
+        background-image: radial-gradient(white, lightblue);
+        border: 2px dotted black;
+      }
+      .active {
+        background-image: radial-gradient(white, rgb(255, 197, 197));
+        border: 2px solid black;
+      }
+      .hidden {
+        display: none;
       }
     </style>
   </head>
@@ -77,7 +112,8 @@
       const { useState } = React;
       function Login() {
         const account = [["tanishq9386", "Tanishq@2004"]];
-        const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const characters =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         const [showPassword, setShowPassword] = useState(false);
         const [captcha, setCaptcha] = useState(generateCaptcha());
         function generateCaptcha() {
@@ -93,24 +129,45 @@
           const id = document.getElementById("username").value;
           const pass = document.getElementById("password").value;
           const cap = document.getElementById("captcha").value;
-          if (cap === captcha) {
-            for (let i = 0; i < account.length; i++) {
-              if (id === account[i][0] && pass === account[i][1]) {
-                window.alert(
-                  "You have entered all the details correctly and you shall be redirected now."
-                );
-                return;
-              } else {
-                window.alert(
-                  "You have entered wrong username/password. Please try again."
-                );
+
+          if (currentMode) {
+            if (cap === captcha) {
+              for (let i = 0; i < account.length; i++) {
+                if (id === account[i][0] && pass === account[i][1]) {
+                  window.alert(
+                    "You have entered all the details correctly and you shall be redirected now."
+                  );
+                  return;
+                }
               }
+              window.alert(
+                "You have entered wrong username/password. Please try again."
+              );
+            } else {
+              window.alert("Wrong captcha. Please try again.");
             }
           } else {
-            window.alert("Wrong captcha. Please try again.");
+            const repass = document.getElementById("repass").value;
+            const name = document.getElementById("name").value;
+
+            if (cap === captcha) {
+              if (id !== "" && pass !== "" && repass !== "" && name !== "") {
+                if(repass===pass){
+                window.alert("Account created successfully. (Not Implemented)");
+                return;
+                }else{
+                  window.alert("Passwords  do not match. Try Again.");
+                }
+              } else {
+                window.alert("There are fields empty. Please fill correctly.");
+              }
+            } else {
+              window.alert("Invalid Captcha try again.");
+            }
           }
           window.location.reload();
         }
+
         function icon(event) {
           event.preventDefault();
           setShowPassword(!showPassword);
@@ -120,13 +177,44 @@
             console.log("now hidden");
           }
         }
-        const reloadCaptcha=()=>{
+        const reloadCaptcha = () => {
           setCaptcha(generateCaptcha());
-        }
+        };
+        const [currentMode, setCurrentMode] = useState(true);
+        const modeLogin = () => {
+          setCurrentMode(true);
+        };
+        const modeSingup = () => {
+          setCurrentMode(false);
+        };
         return (
           <>
-            <h1>Login!!</h1>
+            <h1>{currentMode ? "Login!!" : "Signup!!"}</h1>
             <div className="login">
+              <pre id="button-mar">
+                <button
+                  type="button"
+                  onClick={modeLogin}
+                  className={currentMode ? "active" : "inactive"}
+                >
+                  Login
+                </button>{" "}
+                <button
+                  type="button"
+                  onClick={modeSingup}
+                  className={currentMode ? "inactive" : "active"}
+                >
+                  Sign Up
+                </button>
+              </pre>
+              <input
+                type="text"
+                placeholder="Name"
+                className={currentMode ? "hidden" : ""}
+                id="name"
+              />
+              <br className={currentMode ? "hidden" : ""} />
+              <br className={currentMode ? "hidden" : ""} />
               <input type="text" placeholder="Username" id="username" />
               <br />
               <br />
@@ -134,27 +222,52 @@
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
+                  className={currentMode ? "password" : "passwidth"}
                   id="password"
                 />
                 <button
                   type="button"
-                  id="toggle-pass"
-                  className="toggle-pass"
+                  className={currentMode ? "toggle-pass" : "hidden"}
                   onClick={icon}
                 >
-                  <img className="pass-tog" src={showPassword ? "./show.png" : "./hide.png"} />
+                  <img
+                    className="pass-tog"
+                    src={showPassword ? "./show.png" : "./hide.png"}
+                  />
+                </button>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Re-enter Password"
+                  className={currentMode ? "hidden" : "repass"}
+                  id="repass"
+                />
+                <button
+                  type="button"
+                  className={currentMode ? "hidden" : "repassb"}
+                  onClick={icon}
+                >
+                  <img
+                    className="pass-tog"
+                    src={showPassword ? "./show.png" : "./hide.png"}
+                  />
                 </button>
               </div>
               <br />
               <div className="captcha">
-                {captcha} 
-                <button className="rebutton" type="button" onClick={reloadCaptcha}><img className="recap" src="./reload.png"/></button>
-                </div>
+                {captcha}
+                <button
+                  className="rebutton"
+                  type="button"
+                  onClick={reloadCaptcha}
+                >
+                  <img className="recap" src="./reload.png" />
+                </button>
+              </div>
               <br />
               <input type="text" placeholder="Captcha" id="captcha" />
               <br />
               <br />
-              <button type="submit" onClick={validLogin}>
+              <button type="submit" onClick={validLogin} id="submitb">
                 Submit
               </button>
             </div>
